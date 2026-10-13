@@ -44,8 +44,10 @@ function saveResult(players, scores) {
   fs.writeFileSync(LEADERBOARD, JSON.stringify(board, null, 2));
   return board;
 }
+let WORDS_CACHE = null;
 function words() {
-  return fs
+  if (WORDS_CACHE) return WORDS_CACHE;
+  return (WORDS_CACHE = fs
     .readFileSync(CSV, "utf8")
     .split(/\r?\n/)
     .map((line, id) => {
@@ -65,7 +67,7 @@ function words() {
           }
         : null;
     })
-    .filter(Boolean);
+    .filter(Boolean));
 }
 const shuffle = (a) => [...a].sort(() => Math.random() - 0.5),
   send = (s, o) => {
@@ -316,7 +318,8 @@ server.on("upgrade", (req, s) => {
           correct: good,
           text: good ? "有人抢答正确！" : "回答错误，对手得 1 分",
         });
-        setTimeout(() => next(r), 700);
+        clearTimeout(r.timeout);
+        setTimeout(() => next(r), 250);
       } else if (x.type === "set-count") {
         r = rooms.get(s.room);
         if (r && !r.players.guest) {
