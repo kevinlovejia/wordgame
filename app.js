@@ -50,16 +50,8 @@ function page(id) {
   if (id === "home") updateRank();
 }
 function showName(pageId = "home") {
-  let n = $("playerName");
-  if (!n) {
-    n = document.createElement("span");
-    n.id = "playerName";
-    n.style.cssText =
-      "position:fixed;top:26px;left:50%;transform:translateX(-50%);z-index:10;font-size:13px;font-weight:700;color:#52637c";
-    document.body.append(n);
-  }
-  n.textContent = S.username;
-  n.style.display = pageId === "home" ? "block" : "none";
+  const learner = document.querySelector("#home .level-copy span");
+  if (learner) learner.textContent = S.username;
 }
 function api(u, d) {
   return fetch(u, {
@@ -281,8 +273,18 @@ function installRanking() {
   const button = document.createElement("button");
   button.className = "secondary";
   button.textContent = "🏆 查看排行榜";
-  button.style.marginTop = "12px";
-  home.append(button);
+  const mistakes = home.querySelector(".mistake-entry");
+  const actions = document.createElement("div");
+  actions.style.cssText = "display:flex;gap:10px;margin-top:12px";
+  if (mistakes) {
+    mistakes.style.cssText = "flex:1;margin:0;min-width:0;justify-content:center;padding:12px 8px";
+    mistakes.querySelector("small")?.remove();
+    mistakes.querySelector("i")?.remove();
+    actions.append(mistakes);
+  }
+  button.style.cssText = "flex:1;margin:0;height:auto;min-height:48px;background:#e4ebff;color:#436bd1";
+  actions.append(button);
+  home.querySelector(".stats")?.before(actions);
   const panel = document.createElement("div");
   panel.id = "rankingPanel";
   panel.style.cssText =
