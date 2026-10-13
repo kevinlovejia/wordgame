@@ -96,6 +96,10 @@ function publicUser(u) {
 async function api(req, res) {
   try {
     let d = await body(req);
+    if (req.url === "/api/rank") {
+      const players = readUsers().sort((a,b)=>(b.wins||0)-(a.wins||0)).slice(0,50).map((u,index)=>({place:index+1,username:u.username,wins:u.wins||0}));
+      return json(res, 200, { players });
+    }
     if (req.url === "/api/register") {
       let us = readUsers();
       if (!/^[\w\u4e00-\u9fff]{2,20}$/.test(d.username || ""))
