@@ -19,5 +19,13 @@
     "wins": 0,
     "library": "wordbank1600",
     "familiar": []
+  },
+  {
+    "username": "Dad",
+    "password": "5469435aafb569297ceaa22c11f316066f6f6bfd23ba960d5b9c7c12eeff268c",
+    "token": "2cdbaab7d19b44f35b6d5f4b75cfcd144aaf24737b8d9f1d",
+    "wins": 0,
+    "library": "wordbank1600",
+    "familiar": []
   }
 ]
