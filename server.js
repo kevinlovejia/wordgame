@@ -56,7 +56,7 @@ const shuffle = (a) => [...a].sort(() => Math.random() - 0.5),
     }
   };
 function userByToken(t) {
-  return readUsers().find((u) => u.token === t);
+  return readUsers().find((u) => u.token === t) || (t === "guest" ? { username: "游客", token: "guest", wins: 0, familiar: [] } : null);
 }
 function count(v) {
   return Math.max(10, Math.min(100, Math.round((+v || 30) / 10) * 10));
@@ -84,26 +84,6 @@ function body(req) {
     });
   });
 }
-const rankConfig = [
-  ["词汇青铜", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 2],
-  ["词汇白银", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 3],
-  ["词汇黄金", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 4],
-  ["词汇铂金", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 5],
-  ["词汇星钻", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 7],
-  ["词汇皇冠", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 9],
-  ["词汇王牌", [], 12],
-];
-function rankInfo(wins) {
-  let left = wins;
-  for (const [name, subs, need] of rankConfig) {
-    for (const sub of subs.length ? subs : [""]) {
-      if (left < need)
-        return { name, sub, need, progress: left, remaining: need - left };
-      left -= need;
-    }
-  }
-  return { name: "词汇战神", sub: "", need: 0, progress: 0, remaining: 0 };
-}
 function publicUser(u) {
   return {
     username: u.username,
@@ -111,25 +91,11 @@ function publicUser(u) {
     library: u.library || "wordbank1600",
     token: u.token,
     familiar: u.familiar || [],
-    rankInfo: rankInfo(u.wins || 0),
   };
 }
 async function api(req, res) {
   try {
     let d = await body(req);
-    if (req.url === "/api/rank") {
-      return json(res, 200, {
-        players: readUsers()
-          .sort((a, b) => (b.wins || 0) - (a.wins || 0))
-          .slice(0, 50)
-          .map((u, i) => ({
-            place: i + 1,
-            username: u.username,
-            wins: u.wins || 0,
-            rank: rankInfo(u.wins || 0),
-          })),
-      });
-    }
     if (req.url === "/api/register") {
       let us = readUsers();
       if (!/^[\w\u4e00-\u9fff]{2,20}$/.test(d.username || ""))
@@ -225,23 +191,8 @@ function ask(r) {
 }
 function next(r) {
   clearTimeout(r.timeout);
-  if (++r.index >= r.count) {
-    const winner =
-      r.scores.host === r.scores.guest
-        ? null
-        : r.scores.host > r.scores.guest
-          ? "host"
-          : "guest";
-    if (winner && r.players[winner].user) {
-      const us = readUsers(),
-        u = us.find((x) => x.username === r.players[winner].user.username);
-      if (u) {
-        u.wins = (u.wins || 0) + 1;
-        writeUsers(us);
-      }
-    }
+  if (++r.index >= r.count)
     return broadcast(r, { type: "game-over", scores: r.scores });
-  }
   ask(r);
 }
 function leave(s) {
@@ -302,20 +253,16 @@ server.on("upgrade", (req, s) => {
         if (!u) return send(s, { type: "error", message: "登录已失效" });
         let c = code();
         r = { players: { host: s }, count: count(x.count), timeout: null };
-        s.user = u;
         rooms.set(c, r);
         s.room = c;
         s.role = "host";
         send(s, { type: "room-created", room: c, count: r.count });
       } else if (x.type === "join") {
-        const u = userByToken(x.token);
-        if (!u) return send(s, { type: "error", message: "登录已失效" });
         r = rooms.get(x.room);
         if (!r) return send(s, { type: "error", message: "房间不存在" });
         if (r.players.guest)
           return send(s, { type: "error", message: "房间已满" });
         r.players.guest = s;
-        s.user = u;
         s.room = x.room;
         s.role = "guest";
         start(r);
