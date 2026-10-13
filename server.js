@@ -133,14 +133,14 @@ async function api(req, res) {
     }
     if (req.url === "/api/practice") {
       let u = userByToken(d.token);
-      if (!u) return json(res, 401, { error: "请先登录" });
+      if (!u) u = { username: "游客", token: "guest", familiar: [] };
       let q = select(count(d.count), u.familiar);
       return json(res, 200, { questions: q, count: q.length });
     }
     if (req.url === "/api/familiar") {
       let us = readUsers(),
         u = us.find((x) => x.token === d.token);
-      if (!u) return json(res, 401, { error: "请先登录" });
+      if (!u) return json(res, 200, { ok: true });
       u.familiar = [...new Set([...(u.familiar || []), String(d.id)])];
       writeUsers(us);
       return json(res, 200, { ok: true });
