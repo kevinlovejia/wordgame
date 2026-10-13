@@ -145,10 +145,6 @@ function msg(m) {
       if (!S.locked) {
         S.locked = true;
         S.selected = b;
-        const correct = i === m.correctIndex;
-        b.classList.add(correct ? "correct" : "wrong");
-        b.style.background = correct ? "#dff6a1" : "#ffe5e3";
-        b.style.borderColor = correct ? "#b8dc58" : "#ffaaa5";
         S.ws.send(JSON.stringify({ type: "answer", index: i }));
       }
     });
@@ -162,6 +158,11 @@ function msg(m) {
         if (!n) clearInterval(t);
       }, 100);
   } else if (m.type === "answer-result") {
+    if (m.owner && S.selected) {
+      S.selected.classList.add(m.correct ? "correct" : "wrong");
+      S.selected.style.background = m.correct ? "#dff6a1" : "#ffe5e3";
+      S.selected.style.borderColor = m.correct ? "#b8dc58" : "#ffaaa5";
+    }
     duelStatus.textContent = m.correct ? "回答正确！" : "回答错误，对手得 1 分";
   } else if (m.type === "game-over") {
     if (S.username === "游客") {

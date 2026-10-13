@@ -1,8 +1,8 @@
 {
   "游客": {
     "username": "游客",
-    "games": 2,
-    "wins": 1,
+    "games": 6,
+    "wins": 3,
     "winRate": 50
   }
 }

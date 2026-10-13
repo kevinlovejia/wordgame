@@ -222,6 +222,7 @@ function ask(r) {
     phonetic: w.phonetic,
     options: o,
     correctIndex: o.indexOf(w.meaning),
+    correctAnswer: w.meaning,
     scores: r.scores,
     endsAt,
   });
@@ -314,11 +315,14 @@ server.on("upgrade", (req, s) => {
         r.current.hit = true;
         let good = r.current.o[x.index] === r.current.w.meaning;
         r.scores[good ? s.role : s.role === "host" ? "guest" : "host"]++;
-        broadcast(r, {
+        send(s, {
           type: "answer-result",
           correct: good,
+          owner: true,
+          index: x.index,
           text: good ? "有人抢答正确！" : "回答错误，对手得 1 分",
         });
+        broadcast(r, { type: "answer-result", correct: good, owner: false, text: good ? "对手抢答正确！" : "对手答错，你得 1 分" });
         clearTimeout(r.timeout);
         setTimeout(() => next(r), 250);
       } else if (x.type === "set-count") {
