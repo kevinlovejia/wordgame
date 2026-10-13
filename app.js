@@ -110,12 +110,33 @@ function renderPractice() {
       b.classList.add("correct");
     } else {
       b.classList.add("wrong");
+      api("/api/wrong/add", { username: S.username, id: q.id });
       say("答错了");
     }
     setTimeout(
       () => (++S.i < S.qs.length ? renderPractice() : page("home")),
       700,
     );
+  });
+}
+async function reviewWrong() {
+  const d = await api("/api/wrong/list", { username: S.username });
+  const q = (d.questions || [])[0];
+  page("mistakes");
+  if (!q) {
+    $("mistakeHint").textContent = "暂无错题";
+    $("mistakeWord").textContent = "太棒了！";
+    $("mistakeAnswers").innerHTML = "";
+    return;
+  }
+  $("mistakeWord").textContent = q.word;
+  $("mistakePhonetic").textContent = q.phonetic || "";
+  answers($("mistakeAnswers"), opts(q), (b, _i, x) => {
+    if (x === q.meaning) {
+      b.classList.add("correct");
+      api("/api/wrong/remove", { username: S.username, id: q.id });
+      setTimeout(reviewWrong, 500);
+    } else b.classList.add("wrong");
   });
 }
 function socket() {
@@ -148,15 +169,13 @@ function msg(m) {
         S.ws.send(JSON.stringify({ type: "answer", index: i }));
       }
     });
-    let last = -1,
-      t = setInterval(() => {
-        let n = Math.max(0, Math.ceil((m.endsAt - Date.now()) / 1000));
-        if (n !== last) {
-          $("duelClock").textContent = n;
-          last = n;
-        }
-        if (!n) clearInterval(t);
-      }, 100);
+    clearInterval(S.duelTimer);
+    let left = 12;
+    $("duelClock").textContent = left;
+    S.duelTimer = setInterval(() => {
+      $("duelClock").textContent = --left;
+      if (!left) clearInterval(S.duelTimer);
+    }, 1000);
   } else if (m.type === "answer-result") {
     if (m.owner && S.selected) {
       S.selected.classList.add(m.correct ? "correct" : "wrong");
@@ -193,7 +212,11 @@ document
   .forEach(
     (b) =>
       (b.onclick = () =>
-        b.dataset.go === "practice" ? practice() : page(b.dataset.go)),
+        b.dataset.go === "practice"
+          ? practice()
+          : b.dataset.go === "mistakes"
+            ? reviewWrong()
+            : page(b.dataset.go)),
   );
 $("createRoom").onclick = () => {
   S.role = "host";
@@ -208,18 +231,36 @@ $("createRoom").onclick = () => {
       }),
     );
 };
-$("joinRoom").onclick = () => {
+function joinRoom() {
+  if (
+    S.ws &&
+    (S.ws.readyState === WebSocket.CONNECTING ||
+      S.ws.readyState === WebSocket.OPEN)
+  )
+    return;
+  const room = $("roomInput").value.trim();
+  if (!/^\d{4}$/.test(room)) return say("请输入 4 位房间号");
   S.role = "guest";
   socket();
   S.ws.onopen = () =>
     S.ws.send(
       JSON.stringify({
         type: "join",
-        room: $("roomInput").value,
+        room,
         token: S.token,
+        username: S.username,
       }),
     );
-};
+}
+$("joinRoom").onclick = joinRoom;
+$("roomInput").addEventListener("keydown", (event) => {
+  if (event.key === "Enter") joinRoom();
+});
+$("roomInput").addEventListener("change", () => {
+  if ($("roomInput").value.trim().length === 4) joinRoom();
+});
+$("joinRoom").style.background = "#3158b7";
+$("joinRoom").style.color = "#fff";
 $("copyRoom").onclick = () =>
   navigator.clipboard.writeText($("roomNumber").textContent);
 $("leaveRoom").onclick = () => {

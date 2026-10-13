@@ -1,13 +1,13 @@
 {
   "Dad": {
     "username": "Dad",
-    "games": 9,
-    "wins": 5,
-    "winRate": 55.6
+    "games": 10,
+    "wins": 6,
+    "winRate": 60
   },
   "PC": {
     "username": "PC",
-    "games": 1,
+    "games": 2,
     "wins": 0,
     "winRate": 0
   }

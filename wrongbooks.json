@@ -1,0 +1,50 @@
+{
+  "游客": [
+    {
+      "id": "46",
+      "word": "in all",
+      "meaning": "每一个/令人惊喜的/总计",
+      "phonetic": "",
+      "mistakes": 1
+    }
+  ],
+  "PC": [
+    {
+      "id": "0",
+      "word": "be ready to do sth.",
+      "meaning": "准备好做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "18",
+      "word": "ticket office",
+      "meaning": "售票处/售票局",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "21",
+      "word": "at once",
+      "meaning": "立刻/马上",
+      "phonetic": "",
+      "mistakes": 1
+    }
+  ],
+  "Dad": [
+    {
+      "id": "42",
+      "word": "lose in one's fear",
+      "meaning": "沉浸在害怕中",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "22",
+      "word": "in a hurry",
+      "meaning": "赶快/匆忙地",
+      "phonetic": "",
+      "mistakes": 1
+    }
+  ]
+}

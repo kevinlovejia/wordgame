@@ -8,6 +8,7 @@ const PORT = 3344,
   CSV = path.join(root, "wordbank1600_out.csv"),
   USERS = path.join(root, "users.json"),
   LEADERBOARD = path.join(root, "leaderboard.json"),
+  WRONGBOOKS = path.join(root, "wrongbooks.json"),
   rooms = new Map();
 const hash = (s) => crypto.createHash("sha256").update(s).digest("hex"),
   token = () => crypto.randomBytes(24).toString("hex"),
@@ -29,6 +30,9 @@ function readLeaderboard() {
     return {};
   }
 }
+function readWrongbooks(){try{return JSON.parse(fs.readFileSync(WRONGBOOKS,'utf8'))}catch{return {}}}
+function saveWrongbooks(data){fs.writeFileSync(WRONGBOOKS,JSON.stringify(data,null,2))}
+function addWrong(name,word){const books=readWrongbooks(),book=books[name]||[];const prior=book.find(x=>x.id===word.id);if(prior)prior.mistakes=(prior.mistakes||1)+1;else book.unshift({...word,mistakes:1});books[name]=book.slice(0,200);saveWrongbooks(books)}
 function saveResult(players, scores) {
   const board = readLeaderboard();
   for (const role of ["host", "guest"]) {
@@ -133,6 +137,9 @@ async function api(req, res) {
         .map((u, index) => ({ ...u, place: index + 1 }));
       return json(res, 200, { players });
     }
+    if (req.url === "/api/wrong/list") return json(res,200,{questions:readWrongbooks()[(d.username||'游客').trim()]||[]});
+    if (req.url === "/api/wrong/add") {const w=words().find(x=>x.id===String(d.id));if(w)addWrong((d.username||'游客').trim(),w);return json(res,200,{ok:true})}
+    if (req.url === "/api/wrong/remove") {const books=readWrongbooks(),name=(d.username||'游客').trim();books[name]=(books[name]||[]).filter(x=>x.id!==String(d.id));saveWrongbooks(books);return json(res,200,{ok:true})}
     if (req.url === "/api/register") {
       let us = readUsers();
       if (!/^[\w\u4e00-\u9fff]{2,20}$/.test(d.username || ""))
@@ -314,6 +321,7 @@ server.on("upgrade", (req, s) => {
         if (!r || r.current.hit) return;
         r.current.hit = true;
         let good = r.current.o[x.index] === r.current.w.meaning;
+        if (!good) addWrong(r.names[s.role] || "游客", r.current.w);
         r.scores[good ? s.role : s.role === "host" ? "guest" : "host"]++;
         send(s, {
           type: "answer-result",
