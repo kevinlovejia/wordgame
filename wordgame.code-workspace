@@ -1,8 +1,20 @@
 {
-	"folders": [
-		{
-			"path": "."
-		}
-	],
-	"settings": {}
+// js文件默认使用prettier
+    "[javascript]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    "[json]": {
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "editor.formatOnSave": true
+    },
+    // 一行最大字符，超过自动换行，80/100/120自选
+    "prettier.printWidth": 100,
+    "prettier.tabWidth": 2,
+    "prettier.singleQuote": true,
+    "folders": [
+        {
+            "path": "."
+        }
+    ]
 }

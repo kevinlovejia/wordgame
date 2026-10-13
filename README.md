@@ -13,13 +13,13 @@ node server.js
 本机的 `192.168.x.x` 地址只能被局域网访问，必须给服务器一个公网 HTTPS 地址。最直接的临时方案是 Cloudflare Tunnel：
 
 1. 保持 `node server.js` 运行。
-2. 安装 [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/)。
+2. 内网穿透使用cpoloar。
 3. 另开 PowerShell 执行：
 
 ```powershell
-cloudflared tunnel --url http://localhost:3344
+cpolar http 3344
 ```
 
-4. 把命令输出的 `https://...trycloudflare.com` 链接发给两位玩家。两人都从该链接进入游戏；WebSocket 会自动使用加密的 `wss` 连接。
 
-该临时链接在隧道进程停止后失效。长期使用请把此项目部署至具有公网 IP 的云服务器，或创建带自有域名的 Cloudflare Tunnel。
+
+

@@ -1,0 +1,22 @@
+[
+  {
+    "username": "admin",
+    "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+    "token": "78369dfa202617a1f8dac0d806bf01c2404117539b3ee9fa",
+    "wins": 0,
+    "library": "wordbank1600",
+    "familiar": [
+      "432",
+      "844",
+      "144"
+    ]
+  },
+  {
+    "username": "iPhone",
+    "password": "65e84be33532fb784c48129675f9eff3a682b27168c0ea744b2cf58ee02337c5",
+    "token": "a940d230bbe7c8009e6c281de237d7a7b0f128dc1be396f7",
+    "wins": 0,
+    "library": "wordbank1600",
+    "familiar": []
+  }
+]
