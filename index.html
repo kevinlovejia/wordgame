@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <meta name="theme-color" content="#102038" />
+  <title>词境 · 英语记忆对战</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <main id="app">
+    <section id="home" class="screen home-screen active">
+      <header class="topbar"><div class="brand"><span class="brand-mark">字</span><span>词境</span></div><button class="sound-toggle" id="soundToggle" aria-label="声音开关">♬</button></header>
+      <div class="home-content">
+        <div class="level-card">
+          <div class="avatar">语</div><div class="level-copy"><span>学习者</span><strong id="homeLevel">青铜 I · Lv.1</strong><div class="xp"><i id="xpBar"></i></div><small id="xpText">0 / 10 场胜利</small></div>
+          <div class="streak"><b id="winCount">0</b><span>胜场</span></div>
+        </div>
+        <p class="eyebrow">MEMORIZE · COMPETE · GROW</p>
+        <h1>把词汇，变成<br><em>你的主场。</em></h1>
+        <p class="intro">基于间隔记忆的英语词组练习，与朋友来一场即时词汇抢答。</p>
+        <div class="mode-grid">
+          <button class="mode-card practice-card" data-go="practice"><span class="mode-icon">✦</span><span class="mode-en">DAILY TRAINING</span><strong>开始练习</strong><small>智能复习 · 掌握节奏</small><i>→</i></button>
+          <button class="mode-card duel-card" data-go="lobby"><span class="mode-icon">⚡</span><span class="mode-en">REAL-TIME DUEL</span><strong>在线 PK</strong><small>2 人对战 · 即时抢答</small><i>→</i></button>
+        </div>
+        <div class="stats"><span><b id="reviewedCount">0</b> 今日复习</span><span><b id="accuracy">—</b> 正确率</span><span><b>人教版</b> 初中词库</span></div>
+      </div>
+    </section>
+
+    <section id="practice" class="screen game-screen">
+      <header class="game-header"><button class="back" data-go="home">←</button><div class="game-title"><b>记忆练习</b><span id="practiceProgress">01 / 10</span></div><div class="timer-pill">+<span id="thinkBonus">5</span>s</div></header>
+      <div class="progress-line"><i id="practiceLine"></i></div>
+      <div class="question-wrap"><p class="hint">选择正确的中文释义</p><div class="word-card"><span id="practiceTag">初中核心词组</span><h2 id="practiceWord">look forward to</h2><p id="practicePhonetic">/lʊk ˈfɔːrwərd tuː/</p><button class="listen" id="practiceListen">⌁ 听美式发音</button></div><div class="answers" id="practiceAnswers"></div></div>
+      <div class="memory-note"><span>✦</span><p>熟练掌握的词组会更少出现<br><small>根据你的作答动态安排复习</small></p></div>
+    </section>
+
+    <section id="lobby" class="screen lobby-screen">
+      <header class="game-header"><button class="back" data-go="home">←</button><div class="game-title"><b>在线 PK</b><span>REAL-TIME DUEL</span></div><div></div></header>
+      <div class="lobby-content"><div class="bolt">⚡</div><p class="eyebrow">HEAD TO HEAD</p><h2>准备好开战了吗？</h2><p>与一位好友同时抢答，<br>十题决出今日词王。</p><button class="primary" id="createRoom">创建房间 <span>→</span></button><div class="or"><span>或</span></div><label class="room-input"><span>输入 4 位房间号</span><input id="roomInput" inputmode="numeric" maxlength="4" placeholder="0000" /></label><button class="secondary" id="joinRoom">加入房间</button><small class="connection-note">◉ 使用实时频道连接 · 最多 2 位玩家</small></div>
+    </section>
+
+    <section id="waiting" class="screen waiting-screen"><header class="game-header"><button class="back" id="leaveRoom">←</button><div class="game-title"><b>等待对手</b><span>ROOM READY</span></div><div></div></header><div class="waiting-content"><div class="radar"><i></i><b>⚡</b></div><p>邀请好友加入房间</p><div class="room-number" id="roomNumber">0000</div><button class="copy-btn" id="copyRoom">复制房间号</button><small>对手输入房间号后即可开始</small></div></section>
+
+    <section id="duel" class="screen duel-screen"><header class="duel-header"><div class="player you"><span class="mini-avatar">你</span><div><b>你</b><small id="myScore">0 分</small></div></div><div class="duel-mid"><div class="duel-timer"><i id="duelClock">12</i></div><small id="duelProgress">第 1 / 10 题</small></div><div class="player opponent"><div><b id="opponentName">对手</b><small id="opponentScore">0 分</small></div><span class="mini-avatar opponent-avatar">?</span></div></header><div class="duel-question"><p class="hint">抢答：选出正确释义</p><div class="word-card"><span>实时对战</span><h2 id="duelWord">break the ice</h2><p id="duelPhonetic">/breɪk ði aɪs/</p></div><div class="answers" id="duelAnswers"></div><p class="duel-status" id="duelStatus">倒计时结束前，快选择答案！</p></div></section>
+
+    <section id="result" class="screen result-screen"><div class="result-content"><div id="resultMedal" class="medal">♛</div><p class="eyebrow" id="resultEyebrow">VICTORY</p><h2 id="resultTitle">完美胜出！</h2><p id="resultText">你赢得了这场词汇对决</p><div class="final-score"><b id="finalMy">8</b><span>:</span><b id="finalOpp">4</b></div><div class="reward" id="rewardBox">+ 1 胜场 · 距下一等级还差 9 场</div><button class="primary" data-go="home">回到主页 <span>→</span></button></div></section>
+  </main>
+  <div id="toast"></div><script src="./app.js"></script>
+</body></html>
