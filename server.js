@@ -7,6 +7,7 @@ const PORT = 3344,
   root = __dirname,
   CSV = path.join(root, "wordbank1600_out.csv"),
   USERS = path.join(root, "users.json"),
+  LEADERBOARD = path.join(root, "leaderboard.json"),
   rooms = new Map();
 const hash = (s) => crypto.createHash("sha256").update(s).digest("hex"),
   token = () => crypto.randomBytes(24).toString("hex"),
@@ -20,6 +21,28 @@ function readUsers() {
 }
 function writeUsers(x) {
   fs.writeFileSync(USERS, JSON.stringify(x, null, 2));
+}
+function readLeaderboard() {
+  try {
+    return JSON.parse(fs.readFileSync(LEADERBOARD, "utf8"));
+  } catch {
+    return {};
+  }
+}
+function saveResult(players, scores) {
+  const board = readLeaderboard();
+  for (const role of ["host", "guest"]) {
+    const name = players[role].username || "游客";
+    const row = board[name] || { username: name, games: 0, wins: 0 };
+    row.games++;
+    if (scores[role] > scores[role === "host" ? "guest" : "host"]) row.wins++;
+    row.winRate = row.games
+      ? Math.round((row.wins / row.games) * 1000) / 10
+      : 0;
+    board[name] = row;
+  }
+  fs.writeFileSync(LEADERBOARD, JSON.stringify(board, null, 2));
+  return board;
 }
 function words() {
   return fs
@@ -56,7 +79,12 @@ const shuffle = (a) => [...a].sort(() => Math.random() - 0.5),
     }
   };
 function userByToken(t) {
-  return readUsers().find((u) => u.token === t) || (t === "guest" ? { username: "游客", token: "guest", wins: 0, familiar: [] } : null);
+  return (
+    readUsers().find((u) => u.token === t) ||
+    (t === "guest"
+      ? { username: "游客", token: "guest", wins: 0, familiar: [] }
+      : null)
+  );
 }
 function count(v) {
   return Math.max(10, Math.min(100, Math.round((+v || 30) / 10) * 10));
@@ -97,7 +125,10 @@ async function api(req, res) {
   try {
     let d = await body(req);
     if (req.url === "/api/rank") {
-      const players = readUsers().sort((a,b)=>(b.wins||0)-(a.wins||0)).slice(0,50).map((u,index)=>({place:index+1,username:u.username,wins:u.wins||0}));
+      const players = Object.values(readLeaderboard())
+        .sort((a, b) => b.wins - a.wins || b.winRate - a.winRate)
+        .slice(0, 50)
+        .map((u, index) => ({ ...u, place: index + 1 }));
       return json(res, 200, { players });
     }
     if (req.url === "/api/register") {
@@ -195,8 +226,10 @@ function ask(r) {
 }
 function next(r) {
   clearTimeout(r.timeout);
-  if (++r.index >= r.count)
+  if (++r.index >= r.count) {
+    saveResult(r.names, r.scores);
     return broadcast(r, { type: "game-over", scores: r.scores });
+  }
   ask(r);
 }
 function leave(s) {
@@ -260,6 +293,7 @@ server.on("upgrade", (req, s) => {
         rooms.set(c, r);
         s.room = c;
         s.role = "host";
+        r.names = { host: (x.username || "游客").trim().slice(0, 20) };
         send(s, { type: "room-created", room: c, count: r.count });
       } else if (x.type === "join") {
         r = rooms.get(x.room);
@@ -269,6 +303,7 @@ server.on("upgrade", (req, s) => {
         r.players.guest = s;
         s.room = x.room;
         s.role = "guest";
+        r.names.guest = (x.username || "游客").trim().slice(0, 20);
         start(r);
       } else if (x.type === "answer") {
         r = rooms.get(s.room);
@@ -291,6 +326,24 @@ server.on("upgrade", (req, s) => {
       } else if (x.type === "rematch") {
         r = rooms.get(s.room);
         if (r && r.players.host && r.players.guest) start(r);
+      } else if (x.type === "set-name") {
+        r = rooms.get(s.room);
+        if (!r) return;
+        const old = r.names[s.role],
+          name = (x.username || "游客").trim().slice(0, 20);
+        if (!name || old === name) return;
+        const board = readLeaderboard(),
+          row = board[old];
+        if (row) {
+          const target = board[name] || { username: name, games: 0, wins: 0 };
+          target.games += row.games;
+          target.wins += row.wins;
+          target.winRate = Math.round((target.wins / target.games) * 1000) / 10;
+          board[name] = target;
+          delete board[old];
+          fs.writeFileSync(LEADERBOARD, JSON.stringify(board, null, 2));
+        }
+        r.names[s.role] = name;
       }
     } catch {}
   });
