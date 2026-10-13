@@ -221,6 +221,7 @@ function ask(r) {
     word: w.word,
     phonetic: w.phonetic,
     options: o,
+    correctIndex: o.indexOf(w.meaning),
     scores: r.scores,
     endsAt,
   });

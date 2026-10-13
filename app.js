@@ -104,9 +104,10 @@ function renderPractice() {
   answers($("practiceAnswers"), opts(q), (b, i, x) => {
     if (S.locked) return;
     S.locked = true;
+    speechSynthesis.cancel();
+    speechSynthesis.speak(new SpeechSynthesisUtterance(q.word));
     if (x === q.meaning) {
       b.classList.add("correct");
-      speechSynthesis.speak(new SpeechSynthesisUtterance(q.word));
     } else {
       b.classList.add("wrong");
       say("答错了");
@@ -144,6 +145,10 @@ function msg(m) {
       if (!S.locked) {
         S.locked = true;
         S.selected = b;
+        const correct = i === m.correctIndex;
+        b.classList.add(correct ? "correct" : "wrong");
+        b.style.background = correct ? "#dff6a1" : "#ffe5e3";
+        b.style.borderColor = correct ? "#b8dc58" : "#ffaaa5";
         S.ws.send(JSON.stringify({ type: "answer", index: i }));
       }
     });
@@ -157,7 +162,6 @@ function msg(m) {
         if (!n) clearInterval(t);
       }, 100);
   } else if (m.type === "answer-result") {
-    if (S.selected) S.selected.classList.add(m.correct ? "correct" : "wrong");
     duelStatus.textContent = m.correct ? "回答正确！" : "回答错误，对手得 1 分";
   } else if (m.type === "game-over") {
     if (S.username === "游客") {
