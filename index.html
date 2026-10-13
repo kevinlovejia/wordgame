@@ -9,6 +9,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Noto+Sans+SC:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="./styles.css" />
+  <link rel="stylesheet" href="./extras.css" />
 </head>
 <body>
   <main id="app">
@@ -26,8 +27,14 @@
           <button class="mode-card practice-card" data-go="practice"><span class="mode-icon">✦</span><span class="mode-en">DAILY TRAINING</span><strong>开始练习</strong><small>智能复习 · 掌握节奏</small><i>→</i></button>
           <button class="mode-card duel-card" data-go="lobby"><span class="mode-icon">⚡</span><span class="mode-en">REAL-TIME DUEL</span><strong>在线 PK</strong><small>2 人对战 · 即时抢答</small><i>→</i></button>
         </div>
+        <button class="mistake-entry" data-go="mistakes"><span>↻</span><strong>错题复习</strong><small id="mistakeCount">0 个待复习</small><i>→</i></button>
         <div class="stats"><span><b id="reviewedCount">0</b> 今日复习</span><span><b id="accuracy">—</b> 正确率</span><span><b>人教版</b> 初中词库</span></div>
       </div>
+    </section>
+
+    <section id="mistakes" class="screen game-screen">
+      <header class="game-header"><button class="back" data-go="home">←</button><div class="game-title"><b>错题复习</b><span id="mistakeProgress">错题本</span></div><div></div></header>
+      <div class="question-wrap"><p class="hint" id="mistakeHint">先巩固容易混淆的词组</p><div class="word-card"><span>错题本</span><h2 id="mistakeWord">—</h2><p id="mistakePhonetic">—</p><button class="listen" id="mistakeListen">⌁ 听美式发音</button></div><div class="answers" id="mistakeAnswers"></div></div>
     </section>
 
     <section id="practice" class="screen game-screen">
