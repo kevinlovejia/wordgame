@@ -10,6 +10,13 @@
   ],
   "PC": [
     {
+      "id": "16",
+      "word": "hurry up",
+      "meaning": "赶快/匆忙",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "0",
       "word": "be ready to do sth.",
       "meaning": "准备好做某事",
@@ -28,7 +35,7 @@
       "word": "at once",
       "meaning": "立刻/马上",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     }
   ],
   "Dad": [

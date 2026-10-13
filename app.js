@@ -40,6 +40,7 @@ const sh = (a) => [...a].sort(() => Math.random() - 0.5),
     $("toast").classList.add("show");
     setTimeout(() => $("toast").classList.remove("show"), 1500);
   };
+function rainbow(button){button.classList.remove('rainbow-chase');void button.offsetWidth;button.classList.add('rainbow-chase');setTimeout(()=>button.classList.remove('rainbow-chase'),2000)}
 function page(id) {
   document
     .querySelectorAll(".screen")
@@ -108,6 +109,7 @@ function renderPractice() {
     speechSynthesis.speak(new SpeechSynthesisUtterance(q.word));
     if (x === q.meaning) {
       b.classList.add("correct");
+      rainbow(b);
     } else {
       b.classList.add("wrong");
       api("/api/wrong/add", { username: S.username, id: q.id });
@@ -181,6 +183,7 @@ function msg(m) {
       S.selected.classList.add(m.correct ? "correct" : "wrong");
       S.selected.style.background = m.correct ? "#dff6a1" : "#ffe5e3";
       S.selected.style.borderColor = m.correct ? "#b8dc58" : "#ffaaa5";
+      if (m.correct) rainbow(S.selected);
     }
     duelStatus.textContent = m.correct ? "回答正确！" : "回答错误，对手得 1 分";
   } else if (m.type === "game-over") {
