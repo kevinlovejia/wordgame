@@ -32,7 +32,7 @@ function readLeaderboard() {
 function saveResult(players, scores) {
   const board = readLeaderboard();
   for (const role of ["host", "guest"]) {
-    const name = players[role].username || "游客";
+    const name = players[role] || "游客";
     const row = board[name] || { username: name, games: 0, wins: 0 };
     row.games++;
     if (scores[role] > scores[role === "host" ? "guest" : "host"]) row.wins++;

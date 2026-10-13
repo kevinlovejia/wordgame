@@ -253,7 +253,7 @@ function installRanking() {
       (d.players || [])
         .map(
           (p) =>
-            `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜</small></div>`,
+            `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜 / ${p.games} 场 · ${p.winRate}%</small></div>`,
         )
         .join("") || '<p style="text-align:center">暂无 PK 记录</p>';
     panel.style.display = "block";
