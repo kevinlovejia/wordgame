@@ -3,12 +3,13 @@
     "username": "admin",
     "password": "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
     "token": "78369dfa202617a1f8dac0d806bf01c2404117539b3ee9fa",
-    "wins": 0,
+    "wins": 1,
     "library": "wordbank1600",
     "familiar": [
       "432",
       "844",
-      "144"
+      "144",
+      "2028"
     ]
   },
   {

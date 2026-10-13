@@ -178,6 +178,19 @@ $("registerSubmit").onclick = () => login(true);
 $("startPractice").onclick = practice;
 $("goLobby").onclick = () => page("lobby");
 $("goMistakes").onclick = review;
+$("goRanking").onclick = async () => {
+  const d = await api("/api/rank", {});
+  const list = $("rankList");
+  list.innerHTML = "";
+  (d.players || []).forEach((p) => {
+    const row = document.createElement("div");
+    row.className = "rank-row";
+    row.innerHTML = `<b>#${p.place}</b><span>${p.username}</span><small>${p.rank.name}${p.rank.sub || ""} · ${p.wins} 胜</small>`;
+    list.append(row);
+  });
+  if (!list.children.length) list.textContent = "暂无 PK 记录";
+  page("ranking");
+};
 $("createRoom").onclick = () => {
   S.role = "host";
   ws();
@@ -190,7 +203,7 @@ $("joinRoom").onclick = () => {
   S.role = "guest";
   ws();
   S.ws.onopen = () =>
-    S.ws.send(JSON.stringify({ type: "join", room: $("roomInput").value }));
+    S.ws.send(JSON.stringify({ type: "join", room: $("roomInput").value, token:S.user.token }));
 };
 $("practiceCount").onclick = () => modal("practice");
 $("pkCount").onclick = () => modal("pk");
