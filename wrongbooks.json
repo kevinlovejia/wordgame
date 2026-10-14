@@ -38,6 +38,20 @@
   ],
   "PC": [
     {
+      "id": "23",
+      "word": "return to sp.",
+      "meaning": "返回去某地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "2",
+      "word": "everywhere",
+      "meaning": "到处",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "10",
       "word": "provide sb. with sth.",
       "meaning": "给某人提供某事",
@@ -105,7 +119,7 @@
       "word": "hurry to sp.",
       "meaning": "赶快去某地",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "12",

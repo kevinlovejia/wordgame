@@ -73,9 +73,9 @@ function updateRank() {
   return r;
 }
 function updatePracticeScore() {
-  const high = +localStorage.cjPracticeHigh || 0;
+  const total = +localStorage.cjPracticeScore || 0;
   if ($("practiceScoreHome"))
-    $("practiceScoreHome").textContent = `练习最高积分 ${high}`;
+    $("practiceScoreHome").textContent = `练习积分 ${total}`;
   const pill = document.querySelector("#practice .timer-pill");
   if (pill) pill.textContent = `积分 ${S.practiceScore || 0}`;
 }
@@ -156,7 +156,7 @@ async function practice() {
   if (d.error) return say(d.error);
   S.qs = d.questions;
   S.i = 0;
-  S.practiceScore = 0;
+  S.practiceScore = +localStorage.cjPracticeScore || 0;
   updatePracticeScore();
   page("practice");
   renderPractice();
@@ -183,6 +183,7 @@ function renderPractice() {
         S.practiceScore++;
         say("连击 +1");
       }
+      localStorage.cjPracticeScore = S.practiceScore;
       updatePracticeScore();
     } else {
       b.classList.add("wrong");
@@ -192,14 +193,9 @@ function renderPractice() {
     setTimeout(() => {
       if (++S.i < S.qs.length) renderPractice();
       else {
-        const high = Math.max(
-          +localStorage.cjPracticeHigh || 0,
-          S.practiceScore,
-        );
-        localStorage.cjPracticeHigh = high;
-        if ($("reviewedCount")) $("reviewedCount").textContent = high;
+        if ($("reviewedCount")) $("reviewedCount").textContent = S.practiceScore;
         updatePracticeScore();
-        say(`本轮 ${S.practiceScore} 分 · 最高 ${high} 分`);
+        say(`当前累计积分 ${S.practiceScore} 分`);
         page("home");
       }
     }, 700);
