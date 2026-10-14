@@ -74,7 +74,58 @@ function updateRank() {
       ? `${r.progress} / ${r.need} 胜`
       : "最高段位";
   if ($("winCount")) $("winCount").textContent = S.wins;
+  applyRankTheme(r);
   return r;
+}
+function applyRankTheme(rank) {
+  const palettes = {
+    "词汇青铜": ["#dceaff", "#bdd6ff", "#91b9fa", "#638fe9", "#356bd0"],
+    "词汇白银": ["#effbf1", "#cef1d5", "#9ae1aa", "#59bd70", "#218446"],
+    "词汇黄金": ["#fff8dc", "#ffeca0", "#ffd35b", "#e4a919", "#a86e00"],
+    "词汇铂金": ["#fff0e5", "#ffcd9c", "#ff9e59", "#e86a1d", "#a53c09"],
+    "词汇星钻": ["#ffeded", "#ffc6c6", "#ff9394", "#e64f57", "#a91d34"],
+    "词汇皇冠": ["#f5edff", "#dfc3ff", "#c49dff", "#9462dd", "#5c2aa7"],
+    "词汇王牌": ["#d9dde1", "#abb1b9", "#737a84", "#393e46", "#101318"],
+  };
+  const subIndex = ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"].indexOf(rank.sub);
+  const aceIndex = rank.name === "词汇王牌" && rank.need
+    ? Math.min(4, Math.floor((rank.progress / rank.need) * 5))
+    : 0;
+  const color = rank.name === "词汇战神"
+    ? "#07090d"
+    : (palettes[rank.name] || palettes["词汇青铜"])[
+        rank.name === "词汇王牌" ? aceIndex : Math.max(0, subIndex)
+      ];
+  const dark =
+    rank.name === "词汇战神" ||
+    (rank.name === "词汇王牌" && aceIndex >= 3) ||
+    (rank.name !== "词汇王牌" && subIndex >= 3);
+  const text = dark ? "#ffffff" : "#102038";
+  const muted = dark ? "rgba(255,255,255,.72)" : "#5d6a7b";
+  const card = document.querySelector("#home .level-card");
+  if (!card) return;
+  card.style.background = color;
+  card.style.borderColor = dark ? "rgba(255,255,255,.16)" : "rgba(55,79,110,.16)";
+  card.style.color = text;
+  card.style.boxShadow = dark
+    ? "0 7px 18px rgba(25,35,55,.22)"
+    : "0 5px 15px rgba(38,60,96,.08)";
+  const avatar = card.querySelector(".avatar");
+  if (avatar) {
+    avatar.style.background = dark ? "rgba(255,255,255,.2)" : "rgba(255,255,255,.66)";
+    avatar.style.color = text;
+  }
+  card.querySelectorAll(".level-copy span, .level-copy small").forEach((item) => {
+    item.style.color = muted;
+  });
+  const streak = card.querySelector(".streak");
+  if (streak) streak.style.borderLeftColor = dark ? "rgba(255,255,255,.24)" : "rgba(55,79,110,.14)";
+  const xp = card.querySelector(".xp");
+  if (xp) xp.style.background = dark ? "rgba(255,255,255,.22)" : "rgba(255,255,255,.62)";
+  if ($("xpBar"))
+    $("xpBar").style.background = dark
+      ? "linear-gradient(90deg,#fff,#dbe6ff)"
+      : "linear-gradient(90deg,#5278d2,#7a5bd1)";
 }
 function updatePracticeScore() {
   const total = +localStorage.cjPracticeScore || 0;
