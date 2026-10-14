@@ -10,10 +10,35 @@ const $ = (id) => document.getElementById(id),
     username: localStorage.cjGuestName || "游客",
     wins: +localStorage.cjWins || 0,
   };
-document.querySelector('meta[name="viewport"]')?.setAttribute('content','width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
-document.addEventListener('dblclick', event => event.preventDefault(), { passive:false });
-document.addEventListener('gesturestart', event => event.preventDefault(), { passive:false });
-document.addEventListener('touchstart', event => { if (event.touches.length > 1) event.preventDefault(); }, { passive:false });
+document
+  .querySelector('meta[name="viewport"]')
+  ?.setAttribute(
+    "content",
+    "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
+  );
+document.addEventListener("dblclick", (event) => event.preventDefault(), {
+  passive: false,
+});
+document.addEventListener("gesturestart", (event) => event.preventDefault(), {
+  passive: false,
+});
+document.addEventListener(
+  "touchstart",
+  (event) => {
+    if (event.touches.length > 1) event.preventDefault();
+  },
+  { passive: false },
+);
+let lastTouchEnd = 0;
+document.addEventListener(
+  "touchend",
+  (event) => {
+    const now = Date.now();
+    if (now - lastTouchEnd < 320) event.preventDefault();
+    lastTouchEnd = now;
+  },
+  { passive: false },
+);
 const rankConfig = [
   ["词汇青铜", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 2],
   ["词汇白银", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 3],
@@ -36,19 +61,45 @@ function rankInfo(wins) {
 function updateRank() {
   const r = rankInfo(S.wins);
   $("homeLevel").textContent = `${r.name}${r.sub} · 累计 ${S.wins} 胜`;
-  if ($("xpBar")) $("xpBar").style.width = r.need ? `${Math.round(r.progress / r.need * 100)}%` : "100%";
-  if ($("xpText")) $("xpText").textContent = r.need ? `${r.progress} / ${r.need} 胜` : "最高段位";
+  if ($("xpBar"))
+    $("xpBar").style.width = r.need
+      ? `${Math.round((r.progress / r.need) * 100)}%`
+      : "100%";
+  if ($("xpText"))
+    $("xpText").textContent = r.need
+      ? `${r.progress} / ${r.need} 胜`
+      : "最高段位";
   if ($("winCount")) $("winCount").textContent = S.wins;
   return r;
 }
-function displayDuelWord(word){if(word.length<=19){$("duelWord").textContent=word;return}const mid=Math.floor(word.length/2),cut=word.lastIndexOf(' ',mid);$("duelWord").innerHTML=word.slice(0,cut>0?cut:mid)+'<br>'+word.slice((cut>0?cut:mid)+1)}
+function updatePracticeScore(){const high=+localStorage.cjPracticeHigh||0;if($("practiceScoreHome"))$("practiceScoreHome").textContent=`练习最高积分 ${high}`;if($("thinkBonus"))$("thinkBonus").parentElement.textContent=`积分 ${S.practiceScore||0}`}
+function displayWord(id, word) {
+  const el = $(id);
+  if (word.length <= 19) {
+    el.textContent = word;
+    return;
+  }
+  const mid = Math.floor(word.length / 2),
+    cut = word.lastIndexOf(" ", mid),
+    at = cut > 0 ? cut : mid;
+  el.innerHTML =
+    word.slice(0, at) + "<br>" + word.slice(at + (cut > 0 ? 1 : 0));
+}
+function displayDuelWord(word) {
+  displayWord("duelWord", word);
+}
 const sh = (a) => [...a].sort(() => Math.random() - 0.5),
   say = (t) => {
     $("toast").textContent = t;
     $("toast").classList.add("show");
     setTimeout(() => $("toast").classList.remove("show"), 1500);
   };
-function rainbow(button){button.classList.remove('rainbow-chase');void button.offsetWidth;button.classList.add('rainbow-chase');setTimeout(()=>button.classList.remove('rainbow-chase'),2000)}
+function rainbow(button) {
+  button.classList.remove("rainbow-chase");
+  void button.offsetWidth;
+  button.classList.add("rainbow-chase");
+  setTimeout(() => button.classList.remove("rainbow-chase"), 2000);
+}
 function page(id) {
   document
     .querySelectorAll(".screen")
@@ -56,6 +107,10 @@ function page(id) {
   $(id).classList.add("active");
   showName(id);
   if (id === "home") updateRank();
+  if (id === "lobby") {
+    $("roomInput").value = "";
+    setTimeout(() => $("roomInput").focus(), 0);
+  }
 }
 function showName(pageId = "home") {
   const learner = document.querySelector("#home .level-copy span");
@@ -87,7 +142,11 @@ function answers(box, a, fn) {
   });
 }
 async function practice() {
-  let d = await api("/api/practice", { token: S.token, username:S.username, count: 30 });
+  let d = await api("/api/practice", {
+    token: S.token,
+    username: S.username,
+    count: 30,
+  });
   if (d.error) return say(d.error);
   S.qs = d.questions;
   S.i = 0;
@@ -100,7 +159,7 @@ function renderPractice() {
   $("practiceProgress").textContent =
     `${String(S.i + 1).padStart(2, "0")} / ${S.qs.length}`;
   $("practiceLine").style.width = ((S.i + 1) / S.qs.length) * 100 + "%";
-  $("practiceWord").textContent = q.word;
+  displayWord("practiceWord", q.word);
   $("practicePhonetic").textContent = q.phonetic || "";
   S.locked = false;
   answers($("practiceAnswers"), opts(q), (b, i, x) => {
@@ -117,10 +176,19 @@ function renderPractice() {
       api("/api/wrong/add", { username: S.username, id: q.id });
       say("答错了");
     }
-    setTimeout(
-      () => {if(++S.i<S.qs.length)renderPractice();else{const high=Math.max(+localStorage.cjPracticeHigh||0,S.practiceScore);localStorage.cjPracticeHigh=high;if($("reviewedCount"))$("reviewedCount").textContent=high;say(`本轮 ${S.practiceScore} 分 · 最高 ${high} 分`);page("home")}},
-      700,
-    );
+    setTimeout(() => {
+      if (++S.i < S.qs.length) renderPractice();
+      else {
+        const high = Math.max(
+          +localStorage.cjPracticeHigh || 0,
+          S.practiceScore,
+        );
+        localStorage.cjPracticeHigh = high;
+        if ($("reviewedCount")) $("reviewedCount").textContent = high;
+        say(`本轮 ${S.practiceScore} 分 · 最高 ${high} 分`);
+        page("home");
+      }
+    }, 700);
   });
 }
 async function reviewWrong() {
@@ -136,8 +204,19 @@ async function reviewWrong() {
   $("mistakeWord").textContent = q.word;
   $("mistakePhonetic").textContent = q.phonetic || "";
   let familiar = $("mistakeFamiliar");
-  if (!familiar) { familiar=document.createElement("button"); familiar.id="mistakeFamiliar"; familiar.className="secondary"; familiar.textContent="熟记此词（30 天内不再练习）"; $("mistakeAnswers").before(familiar); }
-  familiar.onclick=async()=>{await api('/api/wrong/memorize',{username:S.username,id:q.id});await api('/api/wrong/remove',{username:S.username,id:q.id});say('已标记熟记');reviewWrong()};
+  if (!familiar) {
+    familiar = document.createElement("button");
+    familiar.id = "mistakeFamiliar";
+    familiar.className = "secondary";
+    familiar.textContent = "熟记此词（30 天内不再练习）";
+    $("mistakeAnswers").before(familiar);
+  }
+  familiar.onclick = async () => {
+    await api("/api/wrong/memorize", { username: S.username, id: q.id });
+    await api("/api/wrong/remove", { username: S.username, id: q.id });
+    say("已标记熟记");
+    reviewWrong();
+  };
   answers($("mistakeAnswers"), opts(q), (b, _i, x) => {
     if (x === q.meaning) {
       b.classList.add("correct");
@@ -177,7 +256,9 @@ function msg(m) {
       }
     });
     $("duelAnswers").style.touchAction = "manipulation";
-    [...$("duelAnswers").children].forEach(button => button.style.touchAction = "manipulation");
+    [...$("duelAnswers").children].forEach(
+      (button) => (button.style.touchAction = "manipulation"),
+    );
     const questionId = (S.questionId || 0) + 1;
     S.questionId = questionId;
     [...$("duelAnswers").children].forEach((button) => {
@@ -309,12 +390,14 @@ function installRanking() {
   const actions = document.createElement("div");
   actions.style.cssText = "display:flex;gap:10px;margin-top:12px";
   if (mistakes) {
-    mistakes.style.cssText = "flex:1;margin:0;min-width:0;justify-content:center;padding:12px 8px";
+    mistakes.style.cssText =
+      "flex:1;margin:0;min-width:0;justify-content:center;padding:12px 8px";
     mistakes.querySelector("small")?.remove();
     mistakes.querySelector("i")?.remove();
     actions.append(mistakes);
   }
-  button.style.cssText = "flex:1;margin:0;height:auto;min-height:48px;background:#e4ebff;color:#436bd1";
+  button.style.cssText =
+    "flex:1;margin:0;height:auto;min-height:48px;background:#e4ebff;color:#436bd1";
   actions.append(button);
   home.querySelector(".stats")?.before(actions);
   const panel = document.createElement("div");

@@ -38,6 +38,27 @@
   ],
   "PC": [
     {
+      "id": "3",
+      "word": "be busy doing sth.",
+      "meaning": "忙于做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "43",
+      "word": "be surprised at",
+      "meaning": "对……感到惊讶",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "29",
+      "word": "discovery",
+      "meaning": "发现",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "17",
       "word": "for sale",
       "meaning": "出售",
@@ -70,14 +91,14 @@
       "word": "amazing",
       "meaning": "不错/令人惊喜的",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "46",
       "word": "in all",
       "meaning": "每一个/令人惊喜的/总计",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "33",
@@ -138,39 +159,151 @@
   ],
   "Dad": [
     {
+      "id": "44",
+      "word": "the National Day holiday",
+      "meaning": "国庆节",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "25",
+      "word": "performance",
+      "meaning": "表演",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "32",
+      "word": "hurriedly",
+      "meaning": "赶紧/匆忙地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "18",
+      "word": "ticket office",
+      "meaning": "售票处/售票局",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "22",
+      "word": "in a hurry",
+      "meaning": "赶快/匆忙地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "5",
+      "word": "date back to",
+      "meaning": "追溯到……时期",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "31",
+      "word": "belong to",
+      "meaning": "属于",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "2",
+      "word": "everywhere",
+      "meaning": "到处",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "21",
+      "word": "at once",
+      "meaning": "立刻/马上",
+      "phonetic": "",
+      "mistakes": 2
+    },
+    {
+      "id": "1",
+      "word": "say to oneself",
+      "meaning": "自言自语",
+      "phonetic": "",
+      "mistakes": 2
+    },
+    {
+      "id": "33",
+      "word": "might as well",
+      "meaning": "感觉还不错/买了也好/还是……的好",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "28",
+      "word": "Türkiye",
+      "meaning": "土耳其",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "24",
+      "word": "exclaim",
+      "meaning": "大声说",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "29",
+      "word": "discovery",
+      "meaning": "发现",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "26",
+      "word": "be sold out",
+      "meaning": "卖光",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "11",
+      "word": "in fact",
+      "meaning": "实际的",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "27",
       "word": "say sadly",
       "meaning": "感到失落的说",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "8",
       "word": "hurry to sp.",
       "meaning": "赶快去某地",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "37",
       "word": "so...that...",
       "meaning": "所以……那个……",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "17",
       "word": "for sale",
       "meaning": "出售",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 3
     },
     {
       "id": "43",
       "word": "be surprised at",
       "meaning": "对……感到惊讶",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "30",
