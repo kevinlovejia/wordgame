@@ -1,0 +1,15 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&display=swap");
+.word-card h2,
+#practiceWord,
+#duelWord,
+#mistakeWord {
+  font-family:
+    Inter,
+    -apple-system,
+    BlinkMacSystemFont,
+    "SF Pro Display",
+    "Segoe UI",
+    sans-serif !important;
+  font-variant-ligatures: common-ligatures;
+  letter-spacing: -0.045em;
+}

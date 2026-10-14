@@ -16,6 +16,10 @@ document
     "content",
     "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover",
   );
+const typography = document.createElement("link");
+typography.rel = "stylesheet";
+typography.href = "./typography.css";
+document.head.append(typography);
 document.addEventListener("dblclick", (event) => event.preventDefault(), {
   passive: false,
 });
