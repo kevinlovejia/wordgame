@@ -197,7 +197,8 @@ function renderPractice() {
     setTimeout(() => {
       if (++S.i < S.qs.length) renderPractice();
       else {
-        if ($("reviewedCount")) $("reviewedCount").textContent = S.practiceScore;
+        if ($("reviewedCount"))
+          $("reviewedCount").textContent = S.practiceScore;
         updatePracticeScore();
         say(`当前累计积分 ${S.practiceScore} 分`);
         page("home");
@@ -250,7 +251,9 @@ function socket() {
   S.ws.onerror = () => say("服务器连接失败");
 }
 function msg(m) {
-  if (m.type === "room-created") {
+  if (m.type === "joined") {
+    S.role = m.role;
+  } else if (m.type === "room-created") {
     $("roomNumber").textContent = m.room;
     page("waiting");
   } else if (m.type === "game-start") page("duel");
@@ -261,7 +264,9 @@ function msg(m) {
     $("duelProgress").textContent = `第 ${m.number} / ${S.count} 题`;
     $("myScore").textContent = m.scores[S.role] + " 分";
     $("opponentScore").textContent =
-      m.scores[S.role === "host" ? "guest" : "host"] + " 分";
+      Object.entries(m.scores)
+        .filter(([id]) => id !== S.role)
+        .reduce((sum, [, score]) => sum + score, 0) + " 分";
     answers($("duelAnswers"), m.options, (b, i) => {
       if (!S.locked) {
         S.locked = true;
@@ -315,13 +320,18 @@ function msg(m) {
         showName();
       }
     }
-    const win =
-      m.scores[S.role] > m.scores[S.role === "host" ? "guest" : "host"];
+    const otherScore = Math.max(
+      ...Object.entries(m.scores)
+        .filter(([id]) => id !== S.role)
+        .map(([, score]) => score),
+      0,
+    );
+    const win = m.scores[S.role] > otherScore;
     if (win) S.wins++;
     localStorage.cjWins = S.wins;
     const r = rankInfo(S.wins);
     $("finalMy").textContent = m.scores[S.role];
-    $("finalOpp").textContent = m.scores[S.role === "host" ? "guest" : "host"];
+    $("finalOpp").textContent = otherScore;
     $("resultTitle").textContent = win ? "完美胜出！" : "对局完成";
     $("rewardBox").textContent = r.remaining
       ? `当前 ${r.name}${r.sub} · 再胜 ${r.remaining} 场升级`

@@ -54,11 +54,11 @@ function addWrong(name, word) {
 }
 function saveResult(players, scores) {
   const board = readLeaderboard();
-  for (const role of ["host", "guest"]) {
+  for (const role of Object.keys(players)) {
     const name = players[role] || "游客";
     const row = board[name] || { username: name, games: 0, wins: 0, draws: 0 };
     row.games++;
-    const other = scores[role === "host" ? "guest" : "host"];
+    const other = Math.max(...Object.entries(scores).filter(([id])=>id!==role).map(([,score])=>score),0);
     if (scores[role] > other) row.wins++;
     else if (scores[role] === other) row.draws = (row.draws || 0) + 1;
     row.winRate = row.games
@@ -245,7 +245,7 @@ function code() {
 function start(r) {
   r.order = select(r.count);
   r.index = 0;
-  r.scores = { host: 0, guest: 0 };
+  r.scores = Object.fromEntries(Object.keys(r.players).map(id=>[id,0]));
   broadcast(r, { type: "game-start", count: r.count });
   ask(r);
 }
@@ -284,10 +284,11 @@ function next(r) {
 function leave(s) {
   let r = rooms.get(s.room);
   if (!r) return;
-  clearTimeout(r.timeout);
   delete r.players[s.role];
+  delete r.names[s.role];
+  if (r.scores) delete r.scores[s.role];
   broadcast(r, { type: "opponent-left" });
-  rooms.delete(s.room);
+  if (!Object.keys(r.players).length) { clearTimeout(r.timeout); rooms.delete(s.room); }
 }
 const server = http.createServer((req, res) => {
   if (req.url.startsWith("/api/")) return api(req, res);
@@ -347,20 +348,20 @@ server.on("upgrade", (req, s) => {
       } else if (x.type === "join") {
         r = rooms.get(x.room);
         if (!r) return send(s, { type: "error", message: "房间不存在" });
-        if (r.players.guest)
-          return send(s, { type: "error", message: "房间已满" });
-        r.players.guest = s;
+        const playerId = `player_${crypto.randomBytes(4).toString('hex')}`;
+        r.players[playerId] = s;
         s.room = x.room;
-        s.role = "guest";
-        r.names.guest = (x.username || "游客").trim().slice(0, 20);
-        start(r);
+        s.role = playerId;
+        r.names[playerId] = (x.username || "游客").trim().slice(0, 20);
+        send(s,{type:'joined',role:playerId});
+        if (r.scores) { r.scores[playerId]=0; send(s,{type:'game-start',count:r.count}); ask(r); } else if (Object.keys(r.players).length >= 2) start(r);
       } else if (x.type === "answer") {
         r = rooms.get(s.room);
         if (!r || r.current.hit) return;
         r.current.hit = true;
         let good = r.current.o[x.index] === r.current.w.meaning;
         if (!good) addWrong(r.names[s.role] || "游客", r.current.w);
-        r.scores[good ? s.role : s.role === "host" ? "guest" : "host"]++;
+        if (good) r.scores[s.role]++; else Object.keys(r.players).filter(id=>id!==s.role).forEach(id=>r.scores[id]++);
         send(s, {
           type: "answer-result",
           correct: good,
@@ -378,13 +379,13 @@ server.on("upgrade", (req, s) => {
         setTimeout(() => next(r), 250);
       } else if (x.type === "set-count") {
         r = rooms.get(s.room);
-        if (r && !r.players.guest) {
+        if (r && Object.keys(r.players).length === 1) {
           r.count = count(x.count);
           send(s, { type: "count-updated", count: r.count });
         } else send(s, { type: "error", message: "对手已加入，题数已锁定" });
       } else if (x.type === "rematch") {
         r = rooms.get(s.room);
-        if (r && r.players.host && r.players.guest) start(r);
+        if (r && Object.keys(r.players).length >= 2) start(r);
       } else if (x.type === "set-name") {
         r = rooms.get(s.room);
         if (!r) return;

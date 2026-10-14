@@ -1,6 +1,34 @@
 {
   "游客": [
     {
+      "id": "31",
+      "word": "belong to",
+      "meaning": "属于",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "37",
+      "word": "so...that...",
+      "meaning": "所以……那个……",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "11",
+      "word": "in fact",
+      "meaning": "实际的",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "29",
+      "word": "discovery",
+      "meaning": "发现",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "8",
       "word": "hurry to sp.",
       "meaning": "赶快去某地",
@@ -133,7 +161,7 @@
       "word": "unexpected",
       "meaning": "未料想到的",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "22",

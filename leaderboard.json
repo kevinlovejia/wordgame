@@ -7,14 +7,20 @@
   },
   "PC": {
     "username": "PC",
-    "games": 7,
-    "wins": 2,
-    "winRate": 28.6
+    "games": 10,
+    "wins": 3,
+    "winRate": 30
   },
   "Dad2": {
     "username": "Dad2",
     "games": 12,
     "wins": 11,
     "winRate": 91.7
+  },
+  "黑马": {
+    "username": "黑马",
+    "games": 1,
+    "wins": 1,
+    "winRate": 100
   }
 }
