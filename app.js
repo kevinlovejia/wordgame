@@ -10,6 +10,10 @@ const $ = (id) => document.getElementById(id),
     username: localStorage.cjGuestName || "游客",
     wins: +localStorage.cjWins || 0,
   };
+document.querySelector('meta[name="viewport"]')?.setAttribute('content','width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover');
+document.addEventListener('dblclick', event => event.preventDefault(), { passive:false });
+document.addEventListener('gesturestart', event => event.preventDefault(), { passive:false });
+document.addEventListener('touchstart', event => { if (event.touches.length > 1) event.preventDefault(); }, { passive:false });
 const rankConfig = [
   ["词汇青铜", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 2],
   ["词汇白银", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 3],
@@ -34,8 +38,10 @@ function updateRank() {
   $("homeLevel").textContent = `${r.name}${r.sub} · 累计 ${S.wins} 胜`;
   if ($("xpBar")) $("xpBar").style.width = r.need ? `${Math.round(r.progress / r.need * 100)}%` : "100%";
   if ($("xpText")) $("xpText").textContent = r.need ? `${r.progress} / ${r.need} 胜` : "最高段位";
+  if ($("winCount")) $("winCount").textContent = S.wins;
   return r;
 }
+function displayDuelWord(word){if(word.length<=19){$("duelWord").textContent=word;return}const mid=Math.floor(word.length/2),cut=word.lastIndexOf(' ',mid);$("duelWord").innerHTML=word.slice(0,cut>0?cut:mid)+'<br>'+word.slice((cut>0?cut:mid)+1)}
 const sh = (a) => [...a].sort(() => Math.random() - 0.5),
   say = (t) => {
     $("toast").textContent = t;
@@ -81,10 +87,11 @@ function answers(box, a, fn) {
   });
 }
 async function practice() {
-  let d = await api("/api/practice", { token: S.token, count: 30 });
+  let d = await api("/api/practice", { token: S.token, username:S.username, count: 30 });
   if (d.error) return say(d.error);
   S.qs = d.questions;
   S.i = 0;
+  S.practiceScore = 0;
   page("practice");
   renderPractice();
 }
@@ -104,13 +111,14 @@ function renderPractice() {
     if (x === q.meaning) {
       b.classList.add("correct");
       rainbow(b);
+      S.practiceScore++;
     } else {
       b.classList.add("wrong");
       api("/api/wrong/add", { username: S.username, id: q.id });
       say("答错了");
     }
     setTimeout(
-      () => (++S.i < S.qs.length ? renderPractice() : page("home")),
+      () => {if(++S.i<S.qs.length)renderPractice();else{const high=Math.max(+localStorage.cjPracticeHigh||0,S.practiceScore);localStorage.cjPracticeHigh=high;if($("reviewedCount"))$("reviewedCount").textContent=high;say(`本轮 ${S.practiceScore} 分 · 最高 ${high} 分`);page("home")}},
       700,
     );
   });
@@ -127,6 +135,9 @@ async function reviewWrong() {
   }
   $("mistakeWord").textContent = q.word;
   $("mistakePhonetic").textContent = q.phonetic || "";
+  let familiar = $("mistakeFamiliar");
+  if (!familiar) { familiar=document.createElement("button"); familiar.id="mistakeFamiliar"; familiar.className="secondary"; familiar.textContent="熟记此词（30 天内不再练习）"; $("mistakeAnswers").before(familiar); }
+  familiar.onclick=async()=>{await api('/api/wrong/memorize',{username:S.username,id:q.id});await api('/api/wrong/remove',{username:S.username,id:q.id});say('已标记熟记');reviewWrong()};
   answers($("mistakeAnswers"), opts(q), (b, _i, x) => {
     if (x === q.meaning) {
       b.classList.add("correct");
@@ -152,7 +163,7 @@ function msg(m) {
   } else if (m.type === "game-start") page("duel");
   else if (m.type === "question") {
     S.locked = false;
-    $("duelWord").textContent = m.word;
+    displayDuelWord(m.word);
     $("duelPhonetic").textContent = m.phonetic || "";
     $("duelProgress").textContent = `第 ${m.number} / ${S.count} 题`;
     $("myScore").textContent = m.scores[S.role] + " 分";
@@ -165,6 +176,8 @@ function msg(m) {
         S.ws.send(JSON.stringify({ type: "answer", index: i }));
       }
     });
+    $("duelAnswers").style.touchAction = "manipulation";
+    [...$("duelAnswers").children].forEach(button => button.style.touchAction = "manipulation");
     const questionId = (S.questionId || 0) + 1;
     S.questionId = questionId;
     [...$("duelAnswers").children].forEach((button) => {

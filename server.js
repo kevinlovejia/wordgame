@@ -9,6 +9,7 @@ const PORT = 3344,
   USERS = path.join(root, "users.json"),
   LEADERBOARD = path.join(root, "leaderboard.json"),
   WRONGBOOKS = path.join(root, "wrongbooks.json"),
+  MEMORIZED = path.join(root, "memorized.json"),
   rooms = new Map();
 const hash = (s) => crypto.createHash("sha256").update(s).digest("hex"),
   token = () => crypto.randomBytes(24).toString("hex"),
@@ -40,6 +41,8 @@ function readWrongbooks() {
 function saveWrongbooks(data) {
   fs.writeFileSync(WRONGBOOKS, JSON.stringify(data, null, 2));
 }
+function memorizedFor(name){try{const all=JSON.parse(fs.readFileSync(MEMORIZED,"utf8")),now=Date.now();return new Set(Object.entries(all[name]||{}).filter(([,until])=>until>now).map(([id])=>id))}catch{return new Set()}}
+function markMemorized(name,id){let all={};try{all=JSON.parse(fs.readFileSync(MEMORIZED,"utf8"))}catch{};all[name]??={};all[name][id]=Date.now()+2592000000;fs.writeFileSync(MEMORIZED,JSON.stringify(all,null,2))}
 function addWrong(name, word) {
   const books = readWrongbooks(),
     book = books[name] || [];
@@ -171,6 +174,10 @@ async function api(req, res) {
       saveWrongbooks(books);
       return json(res, 200, { ok: true });
     }
+    if (req.url === "/api/wrong/memorize") {
+      markMemorized((d.username || "游客").trim(), String(d.id));
+      return json(res, 200, { ok: true });
+    }
     if (req.url === "/api/register") {
       let us = readUsers();
       if (!/^[\w\u4e00-\u9fff]{2,20}$/.test(d.username || ""))
@@ -209,7 +216,7 @@ async function api(req, res) {
     if (req.url === "/api/practice") {
       let u = userByToken(d.token);
       if (!u) u = { username: "游客", token: "guest", familiar: [] };
-      let q = select(count(d.count), u.familiar);
+      let q = select(count(d.count), [...(u.familiar||[]),...memorizedFor((d.username||u.username||"游客").trim())]);
       return json(res, 200, { questions: q, count: q.length });
     }
     if (req.url === "/api/familiar") {

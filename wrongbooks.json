@@ -38,6 +38,62 @@
   ],
   "PC": [
     {
+      "id": "17",
+      "word": "for sale",
+      "meaning": "出售",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "45",
+      "word": "unexpected",
+      "meaning": "未料想到的",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "22",
+      "word": "in a hurry",
+      "meaning": "赶快/匆忙地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "8",
+      "word": "hurry to sp.",
+      "meaning": "赶快去某地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "12",
+      "word": "amazing",
+      "meaning": "不错/令人惊喜的",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "46",
+      "word": "in all",
+      "meaning": "每一个/令人惊喜的/总计",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "33",
+      "word": "might as well",
+      "meaning": "感觉还不错/买了也好/还是……的好",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "6",
+      "word": "have to do sth.",
+      "meaning": "不得不做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "30",
       "word": "prepare to do sth.",
       "meaning": "准备去做某事",
@@ -56,14 +112,14 @@
       "word": "hurry up",
       "meaning": "赶快/匆忙",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "0",
       "word": "be ready to do sth.",
       "meaning": "准备好做某事",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "18",
@@ -81,6 +137,55 @@
     }
   ],
   "Dad": [
+    {
+      "id": "27",
+      "word": "say sadly",
+      "meaning": "感到失落的说",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "8",
+      "word": "hurry to sp.",
+      "meaning": "赶快去某地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "37",
+      "word": "so...that...",
+      "meaning": "所以……那个……",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "17",
+      "word": "for sale",
+      "meaning": "出售",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "43",
+      "word": "be surprised at",
+      "meaning": "对……感到惊讶",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "30",
+      "word": "prepare to do sth.",
+      "meaning": "准备去做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "16",
+      "word": "hurry up",
+      "meaning": "赶快/匆忙",
+      "phonetic": "",
+      "mistakes": 1
+    },
     {
       "id": "41",
       "word": "tell sb. about sth.",
