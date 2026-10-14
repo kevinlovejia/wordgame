@@ -1,14 +1,20 @@
 {
   "Dad": {
     "username": "Dad",
-    "games": 10,
+    "games": 21,
     "wins": 6,
-    "winRate": 60
+    "winRate": 28.6
   },
   "PC": {
     "username": "PC",
-    "games": 2,
-    "wins": 0,
-    "winRate": 0
+    "games": 6,
+    "wins": 2,
+    "winRate": 33.3
+  },
+  "游客": {
+    "username": "游客",
+    "games": 11,
+    "wins": 10,
+    "winRate": 90.9
   }
 }

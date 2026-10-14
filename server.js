@@ -30,9 +30,25 @@ function readLeaderboard() {
     return {};
   }
 }
-function readWrongbooks(){try{return JSON.parse(fs.readFileSync(WRONGBOOKS,'utf8'))}catch{return {}}}
-function saveWrongbooks(data){fs.writeFileSync(WRONGBOOKS,JSON.stringify(data,null,2))}
-function addWrong(name,word){const books=readWrongbooks(),book=books[name]||[];const prior=book.find(x=>x.id===word.id);if(prior)prior.mistakes=(prior.mistakes||1)+1;else book.unshift({...word,mistakes:1});books[name]=book.slice(0,200);saveWrongbooks(books)}
+function readWrongbooks() {
+  try {
+    return JSON.parse(fs.readFileSync(WRONGBOOKS, "utf8"));
+  } catch {
+    return {};
+  }
+}
+function saveWrongbooks(data) {
+  fs.writeFileSync(WRONGBOOKS, JSON.stringify(data, null, 2));
+}
+function addWrong(name, word) {
+  const books = readWrongbooks(),
+    book = books[name] || [];
+  const prior = book.find((x) => x.id === word.id);
+  if (prior) prior.mistakes = (prior.mistakes || 1) + 1;
+  else book.unshift({ ...word, mistakes: 1 });
+  books[name] = book.slice(0, 200);
+  saveWrongbooks(books);
+}
 function saveResult(players, scores) {
   const board = readLeaderboard();
   for (const role of ["host", "guest"]) {
@@ -137,9 +153,22 @@ async function api(req, res) {
         .map((u, index) => ({ ...u, place: index + 1 }));
       return json(res, 200, { players });
     }
-    if (req.url === "/api/wrong/list") return json(res,200,{questions:readWrongbooks()[(d.username||'游客').trim()]||[]});
-    if (req.url === "/api/wrong/add") {const w=words().find(x=>x.id===String(d.id));if(w)addWrong((d.username||'游客').trim(),w);return json(res,200,{ok:true})}
-    if (req.url === "/api/wrong/remove") {const books=readWrongbooks(),name=(d.username||'游客').trim();books[name]=(books[name]||[]).filter(x=>x.id!==String(d.id));saveWrongbooks(books);return json(res,200,{ok:true})}
+    if (req.url === "/api/wrong/list")
+      return json(res, 200, {
+        questions: readWrongbooks()[(d.username || "游客").trim()] || [],
+      });
+    if (req.url === "/api/wrong/add") {
+      const w = words().find((x) => x.id === String(d.id));
+      if (w) addWrong((d.username || "游客").trim(), w);
+      return json(res, 200, { ok: true });
+    }
+    if (req.url === "/api/wrong/remove") {
+      const books = readWrongbooks(),
+        name = (d.username || "游客").trim();
+      books[name] = (books[name] || []).filter((x) => x.id !== String(d.id));
+      saveWrongbooks(books);
+      return json(res, 200, { ok: true });
+    }
     if (req.url === "/api/register") {
       let us = readUsers();
       if (!/^[\w\u4e00-\u9fff]{2,20}$/.test(d.username || ""))
@@ -330,7 +359,12 @@ server.on("upgrade", (req, s) => {
           index: x.index,
           text: good ? "有人抢答正确！" : "回答错误，对手得 1 分",
         });
-        broadcast(r, { type: "answer-result", correct: good, owner: false, text: good ? "对手抢答正确！" : "对手答错，你得 1 分" });
+        broadcast(r, {
+          type: "answer-result",
+          correct: good,
+          owner: false,
+          text: good ? "对手抢答正确！" : "对手答错，你得 1 分",
+        });
         clearTimeout(r.timeout);
         setTimeout(() => next(r), 250);
       } else if (x.type === "set-count") {
