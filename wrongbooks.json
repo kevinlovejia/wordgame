@@ -38,6 +38,27 @@
   ],
   "PC": [
     {
+      "id": "10",
+      "word": "provide sb. with sth.",
+      "meaning": "给某人提供某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "27",
+      "word": "say sadly",
+      "meaning": "感到失落的说",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "31",
+      "word": "belong to",
+      "meaning": "属于",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "3",
       "word": "be busy doing sth.",
       "meaning": "忙于做某事",
@@ -105,7 +126,7 @@
       "word": "might as well",
       "meaning": "感觉还不错/买了也好/还是……的好",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "6",
@@ -126,7 +147,7 @@
       "word": "tell sb. about sth.",
       "meaning": "告诉某人做某事",
       "phonetic": "",
-      "mistakes": 1
+      "mistakes": 2
     },
     {
       "id": "16",
@@ -154,7 +175,7 @@
       "word": "at once",
       "meaning": "立刻/马上",
       "phonetic": "",
-      "mistakes": 2
+      "mistakes": 3
     }
   ],
   "Dad": [

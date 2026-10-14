@@ -72,7 +72,13 @@ function updateRank() {
   if ($("winCount")) $("winCount").textContent = S.wins;
   return r;
 }
-function updatePracticeScore(){const high=+localStorage.cjPracticeHigh||0;if($("practiceScoreHome"))$("practiceScoreHome").textContent=`练习最高积分 ${high}`;if($("thinkBonus"))$("thinkBonus").parentElement.textContent=`积分 ${S.practiceScore||0}`}
+function updatePracticeScore() {
+  const high = +localStorage.cjPracticeHigh || 0;
+  if ($("practiceScoreHome"))
+    $("practiceScoreHome").textContent = `练习最高积分 ${high}`;
+  const pill = document.querySelector("#practice .timer-pill");
+  if (pill) pill.textContent = `积分 ${S.practiceScore || 0}`;
+}
 function displayWord(id, word) {
   const el = $(id);
   if (word.length <= 19) {
@@ -151,6 +157,7 @@ async function practice() {
   S.qs = d.questions;
   S.i = 0;
   S.practiceScore = 0;
+  updatePracticeScore();
   page("practice");
   renderPractice();
 }
@@ -161,6 +168,7 @@ function renderPractice() {
   $("practiceLine").style.width = ((S.i + 1) / S.qs.length) * 100 + "%";
   displayWord("practiceWord", q.word);
   $("practicePhonetic").textContent = q.phonetic || "";
+  S.questionStarted = Date.now();
   S.locked = false;
   answers($("practiceAnswers"), opts(q), (b, i, x) => {
     if (S.locked) return;
@@ -171,6 +179,11 @@ function renderPractice() {
       b.classList.add("correct");
       rainbow(b);
       S.practiceScore++;
+      if (Date.now() - S.questionStarted <= 5000) {
+        S.practiceScore++;
+        say("连击 +1");
+      }
+      updatePracticeScore();
     } else {
       b.classList.add("wrong");
       api("/api/wrong/add", { username: S.username, id: q.id });
@@ -185,6 +198,7 @@ function renderPractice() {
         );
         localStorage.cjPracticeHigh = high;
         if ($("reviewedCount")) $("reviewedCount").textContent = high;
+        updatePracticeScore();
         say(`本轮 ${S.practiceScore} 分 · 最高 ${high} 分`);
         page("home");
       }
@@ -383,6 +397,12 @@ $("practiceListen").onclick = () =>
 page("home");
 function installRanking() {
   const home = $("home").querySelector(".home-content");
+  const score = document.createElement("div");
+  score.id = "practiceScoreHome";
+  score.style.cssText =
+    "font-size:12px;font-weight:700;color:#5278d2;margin:8px 0";
+  home.querySelector(".mode-grid").before(score);
+  updatePracticeScore();
   const button = document.createElement("button");
   button.className = "secondary";
   button.textContent = "🏆 查看排行榜";
