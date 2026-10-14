@@ -254,9 +254,17 @@ function msg(m) {
   if (m.type === "joined") {
     S.role = m.role;
   } else if (m.type === "room-created") {
+    S.count = m.count || 30;
     $("roomNumber").textContent = m.room;
+    syncDuelCountPicker();
     page("waiting");
-  } else if (m.type === "game-start") page("duel");
+  } else if (m.type === "count-updated") {
+    S.count = m.count || 30;
+    syncDuelCountPicker();
+  } else if (m.type === "game-start") {
+    S.count = m.count || S.count;
+    page("duel");
+  }
   else if (m.type === "question") {
     S.locked = false;
     displayDuelWord(m.word);
@@ -350,15 +358,48 @@ document
             ? reviewWrong()
             : page(b.dataset.go)),
   );
+function installDuelCountPicker() {
+  const waiting = $("waiting").querySelector(".waiting-content");
+  if (!waiting || $("duelCountPicker")) return;
+  const picker = document.createElement("fieldset");
+  picker.id = "duelCountPicker";
+  picker.setAttribute("aria-label", "本局单词数量");
+  picker.style.cssText =
+    "border:0;margin:22px 0 0;padding:0;width:100%;text-align:left";
+  picker.innerHTML =
+    '<legend style="margin:0 0 10px;font-size:12px;font-weight:800;color:#52627a;letter-spacing:.08em">选择本局难度</legend><div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:7px"><label style="display:block;cursor:pointer"><input type="radio" name="duelCount" value="10" style="position:absolute;opacity:0"><span style="display:block;border:1px solid #dbe2ed;border-radius:11px;padding:9px 3px;text-align:center;background:#fff"><b style="display:block;font-size:15px">10</b><small style="font-size:10px;white-space:nowrap">随便玩玩</small></span></label><label style="display:block;cursor:pointer"><input type="radio" name="duelCount" value="30" checked style="position:absolute;opacity:0"><span style="display:block;border:1px solid #5278d2;border-radius:11px;padding:9px 3px;text-align:center;background:#eaf0ff;color:#365ebc"><b style="display:block;font-size:15px">30</b><small style="font-size:10px;white-space:nowrap">还行还行</small></span></label><label style="display:block;cursor:pointer"><input type="radio" name="duelCount" value="50" style="position:absolute;opacity:0"><span style="display:block;border:1px solid #dbe2ed;border-radius:11px;padding:9px 3px;text-align:center;background:#fff"><b style="display:block;font-size:15px">50</b><small style="font-size:10px;white-space:nowrap">厉害厉害</small></span></label><label style="display:block;cursor:pointer"><input type="radio" name="duelCount" value="100" style="position:absolute;opacity:0"><span style="display:block;border:1px solid #dbe2ed;border-radius:11px;padding:9px 3px;text-align:center;background:#fff"><b style="display:block;font-size:15px">100</b><small style="font-size:10px;white-space:nowrap">非人类</small></span></label></div>';
+  waiting.append(picker);
+  picker.addEventListener("change", (event) => {
+    const selected = event.target;
+    if (!(selected instanceof HTMLInputElement) || !selected.checked) return;
+    S.count = Number(selected.value);
+    syncDuelCountPicker();
+    S.ws?.send(JSON.stringify({ type: "set-count", count: S.count }));
+  });
+}
+function syncDuelCountPicker() {
+  const picker = $("duelCountPicker");
+  if (!picker) return;
+  picker.querySelectorAll("input").forEach((input) => {
+    const chosen = Number(input.value) === S.count;
+    input.checked = chosen;
+    const card = input.nextElementSibling;
+    card.style.borderColor = chosen ? "#5278d2" : "#dbe2ed";
+    card.style.background = chosen ? "#eaf0ff" : "#fff";
+    card.style.color = chosen ? "#365ebc" : "";
+  });
+}
+installDuelCountPicker();
 $("createRoom").onclick = () => {
   S.role = "host";
+  S.count = 30;
   socket();
   S.ws.onopen = () =>
     S.ws.send(
       JSON.stringify({
         type: "create",
         token: S.token,
-        count: 30,
+        count: S.count,
         username: S.username,
       }),
     );

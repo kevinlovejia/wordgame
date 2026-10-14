@@ -250,6 +250,27 @@
   ],
   "Dad": [
     {
+      "id": "3",
+      "word": "be busy doing sth.",
+      "meaning": "忙于做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "10",
+      "word": "provide sb. with sth.",
+      "meaning": "给某人提供某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "12",
+      "word": "amazing",
+      "meaning": "不错/令人惊喜的",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
       "id": "44",
       "word": "the National Day holiday",
       "meaning": "国庆节",
@@ -310,14 +331,14 @@
       "word": "at once",
       "meaning": "立刻/马上",
       "phonetic": "",
-      "mistakes": 2
+      "mistakes": 3
     },
     {
       "id": "1",
       "word": "say to oneself",
       "meaning": "自言自语",
       "phonetic": "",
-      "mistakes": 2
+      "mistakes": 3
     },
     {
       "id": "33",

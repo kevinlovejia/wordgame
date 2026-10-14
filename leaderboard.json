@@ -1,9 +1,9 @@
 {
   "Dad": {
     "username": "Dad",
-    "games": 21,
-    "wins": 6,
-    "winRate": 28.6
+    "games": 25,
+    "wins": 10,
+    "winRate": 40
   },
   "PC": {
     "username": "PC",
@@ -19,8 +19,8 @@
   },
   "黑马": {
     "username": "黑马",
-    "games": 2,
+    "games": 6,
     "wins": 2,
-    "winRate": 100
+    "winRate": 33.3
   }
 }
