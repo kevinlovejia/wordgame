@@ -332,7 +332,7 @@ function msg(m) {
     const r = rankInfo(S.wins);
     $("finalMy").textContent = m.scores[S.role];
     $("finalOpp").textContent = otherScore;
-    $("resultTitle").textContent = win ? "完美胜出！" : "对局完成";
+    $("resultTitle").textContent = win ? "完美胜出🎊" : "再接再厉💪";
     $("rewardBox").textContent = r.remaining
       ? `当前 ${r.name}${r.sub} · 再胜 ${r.remaining} 场升级`
       : `当前 ${r.name}`;
@@ -435,19 +435,33 @@ function installRanking() {
   panel.style.cssText =
     "display:none;position:fixed;inset:0;z-index:20;background:#f7f6f1;overflow:auto;padding:24px max(20px,calc((100vw - 520px)/2));color:#102038";
   panel.innerHTML =
-    '<button id="closeRanking" class="back">←</button><h2 style="text-align:center">词汇排行榜</h2><p style="text-align:center;color:#718097;font-size:12px">按 PK 胜场排序</p><div id="rankRows"></div>';
+    '<button id="closeRanking" class="back">←</button><h2 style="text-align:center">词汇排行榜</h2><p style="text-align:center;color:#718097;font-size:12px">按 PK 胜场排序</p><div id="rankLoading" style="display:none;text-align:center;padding:52px 0;color:#5278d2"><span style="display:inline-block;font-size:34px;line-height:1;animation:rankSpinner .8s linear infinite">◌</span><p style="margin:12px 0 0;font-size:13px">排行榜加载中…</p></div><div id="rankRows"></div>';
   document.body.append(panel);
+  const spinnerStyle = document.createElement("style");
+  spinnerStyle.textContent =
+    "@keyframes rankSpinner { to { transform: rotate(360deg); } }";
+  document.head.append(spinnerStyle);
   button.onclick = async () => {
-    const d = await api("/api/rank", {}),
-      rows = $("rankRows");
-    rows.innerHTML =
-      (d.players || [])
-        .map(
-          (p) =>
-            `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜 / ${p.draws || 0} 平 / ${p.games} 场 · ${p.winRate}%</small></div>`,
-        )
-        .join("") || '<p style="text-align:center">暂无 PK 记录</p>';
     panel.style.display = "block";
+    const loading = $("rankLoading"),
+      rows = $("rankRows");
+    loading.style.display = "block";
+    rows.innerHTML = "";
+    try {
+      const d = await api("/api/rank", {});
+      rows.innerHTML =
+        (d.players || [])
+          .map(
+            (p) =>
+              `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜 / ${p.draws || 0} 平 / ${p.games} 场 · ${p.winRate}%</small></div>`,
+          )
+          .join("") || '<p style="text-align:center">暂无 PK 记录</p>';
+    } catch {
+      rows.innerHTML =
+        '<p style="text-align:center;color:#718097">加载失败，请稍后重试</p>';
+    } finally {
+      loading.style.display = "none";
+    }
   };
   $("closeRanking").onclick = () => (panel.style.display = "none");
 }
