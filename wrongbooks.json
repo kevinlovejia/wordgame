@@ -1,5 +1,41 @@
 {
-  "游客": [],
+  "游客": [
+    {
+      "id": "8",
+      "word": "hurry to sp.",
+      "meaning": "赶快去某地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "36",
+      "word": "be afraid of",
+      "meaning": "害怕",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "20",
+      "word": "at any moment",
+      "meaning": "随时",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "1",
+      "word": "say to oneself",
+      "meaning": "自言自语",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "16",
+      "word": "hurry up",
+      "meaning": "赶快/匆忙",
+      "phonetic": "",
+      "mistakes": 1
+    }
+  ],
   "PC": [
     {
       "id": "30",
@@ -49,6 +85,85 @@
       "id": "41",
       "word": "tell sb. about sth.",
       "meaning": "告诉某人做某事",
+      "phonetic": "",
+      "mistakes": 1
+    }
+  ],
+  "Dad2": [
+    {
+      "id": "35",
+      "word": "woods",
+      "meaning": "树林",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "1",
+      "word": "say to oneself",
+      "meaning": "自言自语",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "37",
+      "word": "so...that...",
+      "meaning": "所以……那个……",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "34",
+      "word": "a field trip",
+      "meaning": "实地考察",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "5",
+      "word": "date back to",
+      "meaning": "追溯到……时期",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "20",
+      "word": "at any moment",
+      "meaning": "随时",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "13",
+      "word": "crowd around sb.",
+      "meaning": "聚在某人周围",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "0",
+      "word": "be ready to do sth.",
+      "meaning": "准备好做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "32",
+      "word": "hurriedly",
+      "meaning": "赶紧/匆忙地",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "30",
+      "word": "prepare to do sth.",
+      "meaning": "准备去做某事",
+      "phonetic": "",
+      "mistakes": 1
+    },
+    {
+      "id": "39",
+      "word": "century",
+      "meaning": "世纪",
       "phonetic": "",
       "mistakes": 1
     }

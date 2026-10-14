@@ -8,7 +8,7 @@ const $ = (id) => document.getElementById(id),
     role: "",
     locked: false,
     username: localStorage.cjGuestName || "游客",
-    streak: +localStorage.cjWinStreak || 0,
+    wins: +localStorage.cjWins || 0,
   };
 const rankConfig = [
   ["词汇青铜", ["Ⅴ", "Ⅳ", "Ⅲ", "Ⅱ", "Ⅰ"], 2],
@@ -30,8 +30,10 @@ function rankInfo(wins) {
   return { name: "词汇战神", sub: "", need: 0, progress: 0, remaining: 0 };
 }
 function updateRank() {
-  const r = rankInfo(S.streak);
-  $("homeLevel").textContent = `${r.name}${r.sub} · 连胜 ${S.streak} 场`;
+  const r = rankInfo(S.wins);
+  $("homeLevel").textContent = `${r.name}${r.sub} · 累计 ${S.wins} 胜`;
+  if ($("xpBar")) $("xpBar").style.width = r.need ? `${Math.round(r.progress / r.need * 100)}%` : "100%";
+  if ($("xpText")) $("xpText").textContent = r.need ? `${r.progress} / ${r.need} 胜` : "最高段位";
   return r;
 }
 const sh = (a) => [...a].sort(() => Math.random() - 0.5),
@@ -163,6 +165,23 @@ function msg(m) {
         S.ws.send(JSON.stringify({ type: "answer", index: i }));
       }
     });
+    const questionId = (S.questionId || 0) + 1;
+    S.questionId = questionId;
+    [...$("duelAnswers").children].forEach((button) => {
+      button.disabled = true;
+      button.style.background = "#e8ebef";
+      button.style.color = "#9aa5b4";
+      button.style.cursor = "not-allowed";
+    });
+    setTimeout(() => {
+      if (S.questionId !== questionId) return;
+      [...$("duelAnswers").children].forEach((button) => {
+        button.disabled = false;
+        button.style.background = "";
+        button.style.color = "";
+        button.style.cursor = "";
+      });
+    }, 2000);
     clearInterval(S.duelTimer);
     let left = 12;
     $("duelClock").textContent = left;
@@ -190,14 +209,14 @@ function msg(m) {
     }
     const win =
       m.scores[S.role] > m.scores[S.role === "host" ? "guest" : "host"];
-    S.streak = win ? S.streak + 1 : 0;
-    localStorage.cjWinStreak = S.streak;
-    const r = rankInfo(S.streak);
+    if (win) S.wins++;
+    localStorage.cjWins = S.wins;
+    const r = rankInfo(S.wins);
     $("finalMy").textContent = m.scores[S.role];
     $("finalOpp").textContent = m.scores[S.role === "host" ? "guest" : "host"];
     $("resultTitle").textContent = win ? "完美胜出！" : "对局完成";
     $("rewardBox").textContent = r.remaining
-      ? `当前 ${r.name}${r.sub} · 再连胜 ${r.remaining} 场升级`
+      ? `当前 ${r.name}${r.sub} · 再胜 ${r.remaining} 场升级`
       : `当前 ${r.name}`;
     page("result");
   } else if (m.type === "error") say(m.message);
@@ -299,7 +318,7 @@ function installRanking() {
       (d.players || [])
         .map(
           (p) =>
-            `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜 / ${p.games} 场 · ${p.winRate}%</small></div>`,
+            `<div style="display:flex;gap:14px;align-items:center;background:#fff;border:1px solid #e3e7ed;border-radius:14px;margin:10px 0;padding:15px"><b style="color:#5278d2">#${p.place}</b><strong style="flex:1">${p.username}</strong><small>${p.wins} 胜 / ${p.draws || 0} 平 / ${p.games} 场 · ${p.winRate}%</small></div>`,
         )
         .join("") || '<p style="text-align:center">暂无 PK 记录</p>';
     panel.style.display = "block";

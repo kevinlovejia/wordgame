@@ -53,9 +53,11 @@ function saveResult(players, scores) {
   const board = readLeaderboard();
   for (const role of ["host", "guest"]) {
     const name = players[role] || "游客";
-    const row = board[name] || { username: name, games: 0, wins: 0 };
+    const row = board[name] || { username: name, games: 0, wins: 0, draws: 0 };
     row.games++;
-    if (scores[role] > scores[role === "host" ? "guest" : "host"]) row.wins++;
+    const other = scores[role === "host" ? "guest" : "host"];
+    if (scores[role] > other) row.wins++;
+    else if (scores[role] === other) row.draws = (row.draws || 0) + 1;
     row.winRate = row.games
       ? Math.round((row.wins / row.games) * 1000) / 10
       : 0;

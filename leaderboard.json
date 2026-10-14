@@ -7,14 +7,14 @@
   },
   "PC": {
     "username": "PC",
-    "games": 6,
+    "games": 7,
     "wins": 2,
-    "winRate": 33.3
+    "winRate": 28.6
   },
-  "游客": {
-    "username": "游客",
-    "games": 11,
-    "wins": 10,
-    "winRate": 90.9
+  "Dad2": {
+    "username": "Dad2",
+    "games": 12,
+    "wins": 11,
+    "winRate": 91.7
   }
 }
